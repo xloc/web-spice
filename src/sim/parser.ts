@@ -4,6 +4,8 @@
 
 import { unitConvert2float } from "./unitConverter";
 
+import { console } from "./consoleProxy";
+
 export type ParserType = {
   netLists: string[];
   sweep: number[];

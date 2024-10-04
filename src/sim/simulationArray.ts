@@ -10,6 +10,9 @@ import type { ResultType } from "./readOutput";
 import * as ComLink from "comlink";
 import type { ParserType } from "./parser";
 
+import { console } from "./consoleProxy";
+
+
 export type ResultArrayType = {
   results: ResultType[];
   sweep: number[];

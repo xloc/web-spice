@@ -11,6 +11,8 @@ import Module from "./spice";
 
 import readOutput, { ResultType } from "./readOutput";
 
+import { console } from "./consoleProxy";
+
 //export { ResultType };
 
 export class Simulation {
