@@ -11,50 +11,36 @@
       <div class="flex-1 flex flex-col m-5 gap-5">
         <CodeEditorView class="flex-1 basis-0 " @change="code = $event" />
         <button @click="startSimuation()"
-          class="border border-r-purple-100 rounded-lg p-2 px-5 text-2xl text-purple-900">Run
-          Simulation
+          class="border border-r-purple-100 rounded-lg p-2 px-5 text-2xl text-purple-900">
+          Run Simulation
         </button>
       </div>
 
-      <PlotterView class="flex-1 m-5 basis-0" :time="time" :variable="variable" />
+
+      <PlotterView class="flex-1 flex flex-col m-5 basis-0 gap-2" :result="result" />
+
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import CodeEditorView from './components/CodeEditorView.vue';
 import PlotterView from './components/PlotterView.vue';
 
-import { Variable } from './types';
 import { runSimulation } from './simulation';
-import { ResultType, VariableType } from './sim/readOutput';
+import { ResultType } from './sim/readOutput';
 
 const code = ref(""); // watchEffect(() => { console.log(code.value); });
-const time = ref<Variable>();
-const variable = ref<Variable>();
-
-
-
-const getVariable = (result: ResultType, predicate: (v: VariableType) => boolean): Variable | undefined => {
-  const variables = result.param.variables;
-  const index = variables.findIndex(predicate);
-  if (index === -1) return;
-  return {
-    name: variables[index].name,
-    type: variables[index].type as any,
-    data: result.data[index]
-  }
-}
+const result = ref<ResultType>();
 
 const startSimuation = async () => {
   const results = await runSimulation(code.value);
-  const result = results.results[0]
-  if (!result) return;
-
-  console.log(result);
-  time.value = getVariable(result, v => v.type === 'time');
-  variable.value = getVariable(result, v => v.type !== 'time');
+  result.value = results.results[0]
 }
+
+onMounted(() => {
+  startSimuation();
+})
 
 </script>

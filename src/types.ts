@@ -1,8 +1,10 @@
-import type { VariableType, RealDataType, ComplexDataType } from "./sim/readOutput";
+import type { VariableType, RealDataType } from "./sim/readOutput";
 
 
 export interface Variable {
   name: string;
   type: VariableType;
-  data: RealDataType[number] | ComplexDataType[number];
+  color?: string;
+  data: RealDataType[number];
+  // data: RealDataType[number] | ComplexDataType[number];
 }
