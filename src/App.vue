@@ -8,12 +8,12 @@
     <div class="absolute inset-0 flex items-stretch justify-items-stretch">
       <!-- panels -->
 
-      <div class="flex-1 flex flex-col m-5 gap-5">
+      <div class="flex-1 flex flex-col gap-5">
         <CodeEditorView class="flex-1 basis-0 " @change="code = $event" />
-        <button @click="startSimuation()"
+        <!-- <button @click="startSimuation()"
           class="border border-r-purple-100 rounded-lg p-2 px-5 text-2xl text-purple-900">
           Run Simulation
-        </button>
+        </button> -->
       </div>
 
 
