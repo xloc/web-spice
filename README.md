@@ -6,7 +6,7 @@ I want to recreate [EEcircuit/EEsim](https://github.com/eelab-dev/EEcircuit) usi
 
 ## Plan
 - [*] port ngspice
-- [ ] re-implement plotter (working on it)
+- [*] re-implement plotter (working on it)
 - [ ] port spice code editor
 - [ ] parse the spice code using tree-sitter
 - [ ] add schematic rendering

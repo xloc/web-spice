@@ -42,6 +42,7 @@ watch(() => props.result, (result) => {
   if (!result) return;
 
   const xIndex = result.param.variables.findIndex(v => v.name === 'time');
+  if (xIndex === -1) return;
   xVar.value = {
     name: result.param.variables[xIndex].name,
     type: result.param.variables[xIndex].type as any,
