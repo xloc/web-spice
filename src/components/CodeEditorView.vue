@@ -4,9 +4,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, watchEffect } from 'vue';
+import { defineEmits, ref, watchEffect } from 'vue';
 import { useSavedCode } from '../hook/useSavedCode';
 import { type MonacoEditor } from '@guolao/vue-monaco-editor';
+import { useTreeSitter } from '../hook/useTreeSitter';
+
 
 const emits = defineEmits<{
   change: [code: string]
@@ -20,51 +22,27 @@ const MONACO_EDITOR_OPTIONS = {
   formatOnPaste: true,
 }
 const code = useSavedCode();
-
-const beforeMonacoMount = async (monaco: MonacoEditor) => {
-  monaco.languages.register({ id: LANGUAGE });
-  monaco.languages.setMonarchTokensProvider(LANGUAGE, {
-    keywords: ['.model', '.tran', '.end'],
-    operators: ['='],
-    symbols: /[=><!~?:&|+\-*\/\^%]+/,
-
-    tokenizer: {
-      root: [
-        // identifiers and keywords
-        [/[.a-z_$]\w*/, {
-          cases: {
-            '@keywords': 'keyword',
-            '@default': 'identifier'
-          }
-        }],
-        [/[A-Z]\w*/, 'type.identifier'],  // to show class names nicely
-
-        // whitespace
-        { include: '@whitespace' },
-
-        // delimiters and operators
-        [/[{}()\[\]]/, '@brackets'],
-        [/@symbols/, {
-          cases: {
-            '@operators': 'operator',
-            '@default': ''
-          }
-        }],
-
-        // numbers
-        [/\d*(\.\d+)?([eE][\-+]?\d+)?(k|u|m)?/, 'number.float'],
-      ],
-
-      whitespace: [
-        [/[ \t\r\n]+/, 'white'],
-        [/;.*$/, 'comment'],
-      ],
-    },
-  })
-}
+const monaco = ref<MonacoEditor>();
+const parser = useTreeSitter();
 
 watchEffect(() => {
   emits('change', code.value);
 });
+
+
+const beforeMonacoMount = async (monaco_: MonacoEditor) => {
+  monaco.value = monaco_;
+  monaco_.languages.register({ id: LANGUAGE });
+}
+
+watchEffect(() => {
+  if (!parser.value || !monaco.value) return;
+  if (!code.value.trim()) return;
+
+  const tree = parser.value.parse(code.value);
+  tree.rootNode.descendantsOfType('instance_line').forEach((node) => {
+    console.log(node.descendantsOfType('node').map(n => n.text), node.text);
+  });
+})
 
 </script>

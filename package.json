@@ -14,7 +14,8 @@
     "comlink": "^4.4.1",
     "d3": "^7.9.0",
     "lodash": "^4.17.21",
-    "vue": "^3.4.37"
+    "vue": "^3.4.37",
+    "web-tree-sitter": "^0.24.3"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
