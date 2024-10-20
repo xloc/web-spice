@@ -8,6 +8,8 @@ import { defineEmits, ref, watchEffect } from 'vue';
 import { useSavedCode } from '../hook/useSavedCode';
 import { type MonacoEditor } from '@guolao/vue-monaco-editor';
 import { useTreeSitter } from '../hook/useTreeSitter';
+import { Circuit } from '../model/Circuit';
+import { useState } from '../hook/useState';
 
 
 const emits = defineEmits<{
@@ -23,7 +25,7 @@ const MONACO_EDITOR_OPTIONS = {
 }
 const code = useSavedCode();
 const monaco = ref<MonacoEditor>();
-const parser = useTreeSitter();
+
 
 watchEffect(() => {
   emits('change', code.value);
@@ -35,14 +37,15 @@ const beforeMonacoMount = async (monaco_: MonacoEditor) => {
   monaco_.languages.register({ id: LANGUAGE });
 }
 
+const parser = useTreeSitter();
+const state = useState();
 watchEffect(() => {
   if (!parser.value || !monaco.value) return;
   if (!code.value.trim()) return;
 
   const tree = parser.value.parse(code.value);
-  tree.rootNode.descendantsOfType('instance_line').forEach((node) => {
-    console.log(node.descendantsOfType('node').map(n => n.text), node.text);
-  });
+  const circuit = Circuit.fromTree(tree);
+  state.circuit.value = circuit;
 })
 
 </script>
