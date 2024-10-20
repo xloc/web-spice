@@ -13,10 +13,10 @@
       </div>
 
 
-      <div class="flex-1 flex flex-col gap-2 m-2">
+      <div class="flex-1 flex flex-col gap-2 m-2 relative">
         <button @click="startSimuation()"
-          class="border border-r-purple-100 rounded-lg p-2 px-5 text-2xl text-purple-900">
-          Run Simulation
+          class="absolute right-0 top-0 rounded-lg p-2 bg-violet-500 hover:bg-violet-400 text-white shadow-lg">
+          <PlayIcon class="size-6 " />
         </button>
         <!-- <PlotterView class="flex-1 basis-0" :result="result" /> -->
         <SchematicView class="flex-1 basis-0" :circuit="circuit" v-if="circuit" />
@@ -31,6 +31,7 @@ import { onMounted, ref, watchEffect } from 'vue';
 import CodeEditorView from './components/CodeEditorView.vue';
 import PlotterView from './components/PlotterView.vue';
 import SchematicView from './components/SchematicView.vue';
+import { PlayIcon } from '@heroicons/vue/24/solid'
 
 import { runSimulation } from './simulation';
 import { ResultType } from './sim/readOutput';
