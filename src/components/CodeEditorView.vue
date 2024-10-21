@@ -4,12 +4,13 @@
 </template>
 
 <script setup lang="ts">
+import { type MonacoEditor } from '@guolao/vue-monaco-editor';
 import { defineEmits, ref, watchEffect } from 'vue';
 import { useSavedCode } from '../hook/useSavedCode';
-import { type MonacoEditor } from '@guolao/vue-monaco-editor';
+import { useState } from '../hook/useState';
 import { useTreeSitter } from '../hook/useTreeSitter';
 import { Circuit } from '../model/Circuit';
-import { useState } from '../hook/useState';
+import { NgspiceSemanticTokenProvider } from '../model/LanguageServer';
 
 
 const emits = defineEmits<{
@@ -22,6 +23,7 @@ const MONACO_EDITOR_OPTIONS = {
   automaticLayout: true,
   formatOnType: true,
   formatOnPaste: true,
+  'semanticHighlighting.enabled': true // default is depend-on-theme
 }
 const code = useSavedCode();
 const monaco = ref<MonacoEditor>();
@@ -35,6 +37,20 @@ watchEffect(() => {
 const beforeMonacoMount = async (monaco_: MonacoEditor) => {
   monaco.value = monaco_;
   monaco_.languages.register({ id: LANGUAGE });
+
+  await treesitterReady();
+  const parser_value = parser.value!;
+  monaco_.languages.registerDocumentSemanticTokensProvider(LANGUAGE, new NgspiceSemanticTokenProvider(parser_value))
+}
+
+const treesitterReady = () => {
+  return new Promise<void>((resolve) => {
+    const checkParser = () => {
+      if (parser.value) resolve();
+      else setTimeout(checkParser, 100);
+    }
+    checkParser();
+  });
 }
 
 const parser = useTreeSitter();
