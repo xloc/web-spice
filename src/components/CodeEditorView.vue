@@ -11,6 +11,7 @@ import { useState } from '../hook/useState';
 import { useTreeSitter } from '../hook/useTreeSitter';
 import { Circuit } from '../model/Circuit';
 import { NgspiceSemanticTokenProvider } from '../model/LanguageServer';
+import { monarchNgspiceTokenizer } from '../model/monarchNgspiceTokenizer';
 
 
 const emits = defineEmits<{
@@ -37,6 +38,7 @@ watchEffect(() => {
 const beforeMonacoMount = async (monaco_: MonacoEditor) => {
   monaco.value = monaco_;
   monaco_.languages.register({ id: LANGUAGE });
+  monaco_.languages.setMonarchTokensProvider(LANGUAGE, monarchNgspiceTokenizer);
 
   await treesitterReady();
   const parser_value = parser.value!;
