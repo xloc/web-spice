@@ -10,7 +10,7 @@ import { useSavedCode } from '../hook/useSavedCode';
 import { useState } from '../hook/useState';
 import { useTreeSitter } from '../hook/useTreeSitter';
 import { Circuit } from '../model/Circuit';
-import { NgspiceSemanticTokenProvider } from '../model/LanguageServer';
+import { NgspiceProvider } from '../model/LanguageServer';
 import { monarchNgspiceTokenizer } from '../model/monarchNgspiceTokenizer';
 
 
@@ -42,7 +42,10 @@ const beforeMonacoMount = async (monaco_: MonacoEditor) => {
 
   await treesitterReady();
   const parser_value = parser.value!;
-  monaco_.languages.registerDocumentSemanticTokensProvider(LANGUAGE, new NgspiceSemanticTokenProvider(parser_value))
+
+  const provider = new NgspiceProvider(parser_value);
+  monaco_.languages.registerDocumentSemanticTokensProvider(LANGUAGE, provider)
+  monaco_.languages.registerHoverProvider(LANGUAGE, provider);
 }
 
 const treesitterReady = () => {
