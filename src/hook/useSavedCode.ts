@@ -3,6 +3,7 @@ import { useStorage } from "@vueuse/core"
 
 const DEFUALT_CODE = `
 Ring Oscillator
+
 .include modelcard.CMOS90
 
 m1 out1 vg1 0 0 N90 W=10.0u L=0.09u M=10

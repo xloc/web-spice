@@ -28,7 +28,7 @@ export const monarchNgspiceTokenizer: languages.IMonarchLanguage = {
     whitespace: [
       [/[ \t\r\n]+/, 'white'],
       [/[;$].*$/, 'comment'],
-      [/^\*.*$/, 'comment'],
+      [/^\*.*$/, 'document'],
     ],
   },
 };
