@@ -28,6 +28,7 @@ I want to recreate [EEcircuit/EEsim](https://github.com/eelab-dev/EEcircuit) usi
   - using parser: https://tree-sitter.github.io/tree-sitter/using-parsers
   - creating parser: https://tree-sitter.github.io/tree-sitter/creating-parsers
   - web-tree-sitter: https://github.com/tree-sitter/tree-sitter/tree/master/lib/binding_web
+  - parser docs: https://github.com/nvim-treesitter/nvim-treesitter/wiki
 - `monaco-editor`: https://microsoft.github.io/monaco-editor/
   - docs: https://microsoft.github.io/monaco-editor/docs.html
 - `@guolao/vue-monaco-editor`: https://github.com/imguolao/monaco-vue
