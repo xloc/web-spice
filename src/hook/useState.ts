@@ -1,11 +1,12 @@
-import { shallowRef } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { createGlobalState } from '@vueuse/core'
 
-import { Circuit } from '../model/Circuit'
+import { Circuit, Device } from '../model/Circuit'
 
 export const useState = createGlobalState(
   () => {
     const circuit = shallowRef<Circuit>()
-    return { circuit }
+    const devices = ref<Device[]>([])
+    return { circuit, devices }
   }
 )

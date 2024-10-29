@@ -9,15 +9,14 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { type MonacoEditor } from '@guolao/vue-monaco-editor';
+import { editor } from 'monaco-editor';
 import { defineEmits, ref, shallowRef, watchEffect } from 'vue';
+import { Tree } from 'web-tree-sitter';
 import { useSavedCode } from '../hook/useSavedCode';
 import { useState } from '../hook/useState';
 import { useTreeSitter } from '../hook/useTreeSitter';
-import { Circuit } from '../model/Circuit';
-import { NgspiceProvider } from '../model/LanguageServer';
+import { useCircuit } from '../model/Circuit';
 import { monarchNgspiceTokenizer } from '../model/monarchNgspiceTokenizer';
-import { editor, Range } from 'monaco-editor';
-import { Edit, Tree } from 'web-tree-sitter';
 import SyntaxTreePreview from './SyntaxTreePreview/SyntaxTreePreview.vue';
 
 
@@ -36,76 +35,35 @@ const MONACO_EDITOR_OPTIONS = {
 const code = useSavedCode();
 const monaco = ref<MonacoEditor>();
 const treeRef = shallowRef<Tree>();
+const parser = useTreeSitter();
+const state = useState();
+const { devices, model, editor: codeEditor } = useCircuit({ code, parser });
 
+watchEffect(() => { emits('change', code.value); });
 
-watchEffect(() => {
-  emits('change', code.value);
-});
+watchEffect(() => { state.devices.value = devices.value; })
 
 
 const beforeMonacoMount = async (monaco_: MonacoEditor) => {
   monaco.value = monaco_;
   monaco_.languages.register({ id: LANGUAGE });
   monaco_.languages.setMonarchTokensProvider(LANGUAGE, monarchNgspiceTokenizer);
-
-  await treesitterReady();
-  const parser_value = parser.value!;
-
-  const provider = new NgspiceProvider(parser_value);
 }
 
+const monacoMount = async (editor_: editor.IStandaloneCodeEditor, _monaco: MonacoEditor) => {
+  codeEditor.value = editor_;
 
-const monacoMount = async (editor: editor.IStandaloneCodeEditor, _monaco: MonacoEditor) => {
-  await treesitterReady();
-  const parser_value = parser.value!;
-  let tree = parser_value.parse(code.value);
-  treeRef.value = tree;
-
-  editor.onDidChangeModelContent((e) => {
-    const model = editor.getModel();
+  model.value = (() => {
+    const model = editor_.getModel();
     if (!model) throw new Error('Model not found');
-    e.changes.forEach((change) => {
-      tree.edit(buildEditFromChange(change, model));
-    });
-    tree = parser_value.parse(model.getLinesContent().join('\n'), tree);
-    treeRef.value = tree;
-  });
+    return model
+  })();
+
 }
 
-
-const buildEditFromChange = (change: editor.IModelContentChange, model: editor.ITextModel): Edit => {
-  const range = Range.lift(change.range);
-  const start = model.getOffsetAt(range.getStartPosition());
-  const end = model.getOffsetAt(range.getEndPosition());
-  return {
-    startIndex: start - 1,
-    oldEndIndex: end - 1,
-    newEndIndex: end - 1,
-    startPosition: { row: range.startLineNumber - 1, column: range.startColumn - 1 },
-    oldEndPosition: { row: range.endLineNumber - 1, column: range.endColumn - 1 },
-    newEndPosition: { row: range.endLineNumber - 1, column: range.endColumn - 1 },
-  }
-}
-
-const treesitterReady = () => {
-  return new Promise<void>((resolve) => {
-    const checkParser = () => {
-      if (parser.value) resolve();
-      else setTimeout(checkParser, 100);
-    }
-    checkParser();
-  });
-}
-
-const parser = useTreeSitter();
-const state = useState();
 watchEffect(() => {
-  if (!parser.value || !monaco.value) return;
-  if (!code.value.trim()) return;
-
-  const tree = parser.value.parse(code.value);
-  const circuit = Circuit.fromTree(tree);
-  state.circuit.value = circuit;
+  if (devices.value.length)
+    console.table(devices.value);
 })
 
 </script>
