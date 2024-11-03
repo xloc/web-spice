@@ -127,11 +127,13 @@ export const useCircuit = (options: UseCircuitOptions) => {
   const circuit = shallowRef<Circuit | null>(null);
   const model = shallowRef<editor.ITextModel>();
   const editor = shallowRef<editor.IStandaloneCodeEditor>();
+  const tree = shallowRef<Parser.Tree>();
 
   // output
   const devices = ref<Device[]>([]);
   const renderCircuitChange = (c: Circuit) => {
     devices.value = c.devices;
+    tree.value = c.tree;
   }
 
   // initialze circuit
@@ -162,5 +164,5 @@ export const useCircuit = (options: UseCircuitOptions) => {
     codeWatcher.stop();
   });
 
-  return { circuit, devices, model, editor };
+  return { circuit, devices, model, editor, tree };
 }

@@ -19,7 +19,7 @@
           <PlayIcon class="size-6 " />
         </button>
         <!-- <PlotterView class="flex-1 basis-0" :result="result" /> -->
-        <SchematicView class="flex-1 basis-0" :circuit="circuit" v-if="circuit" />
+        <SchematicView class="flex-1 basis-0" />
       </div>
 
     </div>
@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref } from 'vue';
 import CodeEditorView from './components/CodeEditorView.vue';
 import PlotterView from './components/PlotterView.vue';
 import SchematicView from './components/SchematicView.vue';
@@ -35,9 +35,8 @@ import { PlayIcon } from '@heroicons/vue/24/solid'
 
 import { runSimulation } from './simulation';
 import { ResultType } from './sim/readOutput';
-import { useState } from './hook/useState';
 
-const code = ref(""); // watchEffect(() => { console.log(code.value); });
+const code = ref("");
 const result = ref<ResultType>();
 
 const startSimuation = async () => {
@@ -48,7 +47,5 @@ const startSimuation = async () => {
 onMounted(() => {
   startSimuation();
 })
-
-const { circuit } = useState();
 
 </script>

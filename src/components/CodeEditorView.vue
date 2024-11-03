@@ -10,8 +10,7 @@
 import _ from 'lodash';
 import { type MonacoEditor } from '@guolao/vue-monaco-editor';
 import { editor } from 'monaco-editor';
-import { defineEmits, ref, shallowRef, watchEffect } from 'vue';
-import { Tree } from 'web-tree-sitter';
+import { defineEmits, ref, watchEffect } from 'vue';
 import { useSavedCode } from '../hook/useSavedCode';
 import { useState } from '../hook/useState';
 import { useTreeSitter } from '../hook/useTreeSitter';
@@ -34,10 +33,9 @@ const MONACO_EDITOR_OPTIONS = {
 }
 const code = useSavedCode();
 const monaco = ref<MonacoEditor>();
-const treeRef = shallowRef<Tree>();
 const parser = useTreeSitter();
 const state = useState();
-const { devices, model, editor: codeEditor } = useCircuit({ code, parser });
+const { devices, model, editor: codeEditor, tree: treeRef } = useCircuit({ code, parser });
 
 watchEffect(() => { emits('change', code.value); });
 

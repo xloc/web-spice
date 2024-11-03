@@ -1,8 +1,10 @@
 <template>
-  <div v-if="node.children.length === 0">
-    <span class="bg-orange-400 text-white px-1 mr-2 rounded-sm"> {{ node.type }} </span>
-    <span> {{ JSON.stringify(text) }} </span>
-  </div>
+  <template v-if="node.children.length === 0">
+    <div v-if="!isNewline(node.text)">
+      <span class="bg-orange-400 text-white px-1 mr-2 rounded-sm"> {{ node.type }} </span>
+      <span> {{ JSON.stringify(text) }} </span>
+    </div>
+  </template>
 
   <details v-else :open="expandLevel > 0">
     <summary>
@@ -27,5 +29,6 @@ const props = defineProps<{
 }>()
 
 const text = computed(() => truncate(props.node.text, { length: 20, omission: '...' }))
+const isNewline = (text: string) => !!text.match(/\n+/)
 
 </script>
