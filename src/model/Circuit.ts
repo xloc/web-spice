@@ -1,9 +1,10 @@
 import type Parser from 'web-tree-sitter';
-import _ from 'lodash';
+import _, { update } from 'lodash';
 import * as d3 from 'd3';
 import { editor, Range } from 'monaco-editor';
 import { Edit, SyntaxNode } from 'web-tree-sitter';
 import { MaybeRefOrGetter, ref, shallowRef, toValue, watch, watchEffect } from 'vue';
+import { defineStore } from 'pinia';
 
 export interface Device {
   nodeID: string;
@@ -20,6 +21,36 @@ export interface Device {
 export interface Net {
   id: string;
 }
+
+const useCircuitStore = defineStore('circuit', {
+  state: () => ({
+    // devices: [] as Device[],
+    // net: [] as Net[],
+    code: '',
+    tree: null as Parser.Tree | null,
+    model: null as editor.ITextModel | null,
+    editor: null as editor.IStandaloneCodeEditor | null,
+    parser: null as Parser | null,
+  }),
+  getters: {
+
+  },
+  actions: {
+    initTree(code: string) {
+      this.code = code;
+      this.tree = this.parser?.parse(code) ?? null;
+    },
+    updateTree(code: string, changes: editor.IModelContentChange[]) {
+      const tree = this.tree;
+      if (!tree) { console.error('Tree is not initialized'); return; }
+      changes.forEach(change => {
+        tree.edit(buildEditFromChange(change, this.model!))
+      });
+      this.tree = this.parser?.parse(code, tree) ?? null;
+    },
+  }
+});
+
 
 export class Circuit {
   devices: Device[];
